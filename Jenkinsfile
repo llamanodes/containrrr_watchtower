@@ -17,7 +17,7 @@ pipeline {
         // buildkit is much faster and handles caching much better than the default build process.
         DOCKER_BUILDKIT=1
 
-        DOCKERFILE="./dockerfiles/Dockerfile"
+        DOCKERFILE="./dockerfiles/"
 
         GIT_SHORT="${GIT_COMMIT.substring(0,8)}"
     }
