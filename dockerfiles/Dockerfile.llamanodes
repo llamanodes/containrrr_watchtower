@@ -49,7 +49,7 @@ LABEL "com.centurylinklabs.watchtower"="true"
 
 # copy files from other container
 # TODO: why copy zoneinfo?
-COPY --from=build_app /usr/share/zoneinfo /usr/share/
+COPY --from=builder /usr/share/zoneinfo /usr/share/
 COPY --from=build_app /watchtower/watchtower /
 COPY --from=build_ecr /go/bin/docker-credential-ecr-login /go/bin/
 
