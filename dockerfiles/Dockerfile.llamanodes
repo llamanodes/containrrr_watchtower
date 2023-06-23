@@ -1,0 +1,56 @@
+#
+# ECR helper Builder
+#
+FROM golang:alpine as builder
+
+# upstream installs ca-certificates, but we mount those from the host instead
+RUN apk add --no-cache \
+    alpine-sdk \
+    git \
+    tzdata
+
+FROM builder as build_ecr
+
+ENV GO111MODULE off
+ENV CGO_ENABLED 0
+ENV REPO github.com/awslabs/amazon-ecr-credential-helper/ecr-login/cli/docker-credential-ecr-login
+
+RUN go get -u $REPO && rm /go/bin/docker-credential-ecr-login
+
+RUN go build \
+    -o /go/bin/docker-credential-ecr-login \
+    /go/src/$REPO
+
+#
+# Watchtower Builder
+#
+
+FROM builder as build_app
+
+# use version (for example "v0.3.3") or "main"
+ARG WATCHTOWER_VERSION=main
+
+COPY . /watchtower
+
+RUN \
+    cd /watchtower && \
+    \
+    GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -a -ldflags "-extldflags '-static' -X github.com/containrrr/watchtower/internal/meta.Version=$(git describe --tags)" . && \
+    GO111MODULE=on go test ./... -v
+
+
+#
+# watchtower
+#
+
+FROM scratch
+
+LABEL "com.centurylinklabs.watchtower"="true"
+
+# copy files from other container
+# TODO: why copy zoneinfo?
+COPY --from=build_app /usr/share/zoneinfo /usr/share/
+COPY --from=build_app /watchtower/watchtower /
+COPY --from=build_ecr /go/bin/docker-credential-ecr-login /go/bin/
+
+ENTRYPOINT ["/watchtower"]

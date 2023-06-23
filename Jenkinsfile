@@ -18,7 +18,7 @@ pipeline {
         DOCKER_BUILDKIT=1
 
         DOCKERFILE_DIR="./dockerfiles/"
-        DOCKERFILE="Dockerfile.dev-self-contained"
+        DOCKERFILE="Dockerfile.llamanodes"
 
         GIT_SHORT="${GIT_COMMIT.substring(0,8)}"
     }
