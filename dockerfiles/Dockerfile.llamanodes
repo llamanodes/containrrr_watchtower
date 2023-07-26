@@ -47,6 +47,9 @@ FROM scratch
 
 LABEL "com.centurylinklabs.watchtower"="true"
 
+ENV HOME "/"
+ENV PATH "$PATH:/go/bin"
+
 # copy files from other container
 # TODO: why copy zoneinfo?
 COPY --from=builder /usr/share/zoneinfo /usr/share/
