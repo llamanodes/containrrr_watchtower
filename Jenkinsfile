@@ -34,7 +34,7 @@ pipeline {
                     }
                     steps {
                         script {
-                            myBuildandPush.buildAndPush()
+                            myBuildAndPush.buildAndPush()
                         }
                     }
                 }
@@ -47,7 +47,7 @@ pipeline {
                     }
                     steps {
                         script {
-                            myBuildandPush.buildAndPush()
+                            myBuildAndPush.buildAndPush()
                         }
                     }
                 }
